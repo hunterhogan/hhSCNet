@@ -1,5 +1,3 @@
-#From HT demucs https://github.com/facebookresearch/demucs/tree/release_v4?tab=readme-ov-file
-
 import random
 import torch as th
 from torch import nn
@@ -102,3 +100,20 @@ class Scale(nn.Module):
             scales = th.empty(batch, streams, 1, 1, device=device).uniform_(self.min, self.max)
             wav *= scales
         return wav
+
+"""
+Some or all of the work in this file may be restricted by the following copyright.
+MIT License
+
+Copyright (c) Meta, Inc. and its affiliates.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+"""

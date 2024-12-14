@@ -1,0 +1,5 @@
+pyvenv.cfg
+/Lib/site-packages/
+*.egg-info/
+/Scripts/
+/share/man/man1/

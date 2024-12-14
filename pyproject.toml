@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hhSCNet"
+description = ""
+readme = "README.md"
+authors = [
+    {name = "Hunter Hogan", email = "HunterHogan@pm.me"}
+    ]
+version = "0.0.1"
+dependencies = [
+    "accelerate",
+    "einops",
+    "julius",
+    "ml_collections",
+    "numpy",
+    "PyYAML",
+    "soundfile",
+    "torch",
+    "torchaudio",
+    "tqdm",
+    ]
+urls = { homepage = "https://github.com/hunterhogan/hhSCNet" }
+
+[tool.setuptools]
+include-package-data = true
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["*"]
