@@ -60,7 +60,7 @@ class Remix(nn.Module):
         """
         Shuffle sources within one batch.
         Each batch is divided into groups of size `group_size` and shuffling is done within
-        each group separatly. This allow to keep the same probability distribution no matter
+        each group separately. This allow to keep the same probability distribution no matter
         the number of GPUs. Without this grouping, using more GPUs would lead to a higher
         probability of keeping two sources from the same track together which can impact
         performance.

@@ -1,31 +1,24 @@
-[build-system]
-requires = ["setuptools>=61.0", "wheel"]
-build-backend = "setuptools.build_meta"
-
-[project]
+[tool.poetry]
 name = "hhSCNet"
+version = "0.1.0"
 description = ""
+authors = ["Hunter Hogan <HunterHogan@pm.me>"]
 readme = "README.md"
-authors = [
-    {name = "Hunter Hogan", email = "HunterHogan@pm.me"}
-    ]
-version = "0.0.1"
-dependencies = [
-    "accelerate",
-    "einops",
-    "julius",
-    "ml_collections",
-    "numpy",
-    "PyYAML",
-    "soundfile",
-    "torch",
-    "torchaudio",
-    "tqdm",
-    ]
-urls = { homepage = "https://github.com/hunterhogan/hhSCNet" }
 
-[tool.setuptools]
-include-package-data = true
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["*"]
+[tool.poetry.dependencies]
+python = "^3.12"
+numpy = "^2.2.0"
+ml-collections = "^1.0.0"
+tqdm = "^4.67.1"
+accelerate = "^1.2.1"
+einops = "^0.8.0"
+julius = "^0.2.7"
+pyyaml = "^6.0.2"
+soundfile = "^0.12.1"
+torch = "^2.5.1"
+torchaudio = "^2.5.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

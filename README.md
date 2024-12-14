@@ -1,6 +1,6 @@
-# SCNet
+# hhSCNet
 
-A fork of [SCNet: Sparse Compression Network for Music Source Separation](https://arxiv.org/abs/2401.13276)
+See [SCNet: Sparse Compression Network for Music Source Separation](https://arxiv.org/abs/2401.13276)
 
 ## Cite the original paper
 
