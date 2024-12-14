@@ -1,0 +1,89 @@
+
+data:
+  wav: /root/autodl-tmp/musdbhq
+  samplerate: 44100
+  segment: 11
+  shift: 1
+  channels: 2
+  normalize: true
+  metadata: ./metadata
+  sources: ['drums', 'bass', 'other', 'vocals']
+
+ema:
+  epoch: [0.9, 0.95]
+  batch: [0.9995, 0.9999]
+
+model:
+  sources: ['drums', 'bass', 'other', 'vocals']
+  audio_channels: 2
+  # Main structure
+  dims: [4, 32, 64, 128]
+  # STFT
+  nfft: 4096
+  hop_size: 1024
+  win_size: 4096
+  normalized: True
+  # SD/SU layer
+  band_SR: [0.175, 0.392, 0.433]     
+  band_stride: [1, 4, 16]             
+  band_kernel: [3, 4, 16]                  
+  # Convolution Module
+  conv_depths: [3,2,1]
+  compress: 4 
+  conv_kernel: 3
+  # Dual-path RNN
+  num_dplayer: 6
+  expand: 1
+
+epochs: 200
+batch_size: 4
+
+optim:
+  lr: 0.0005
+  decay_rate: 0.98
+  decay_step: 10
+  momentum: 0.9
+  beta2: 0.999
+  optim: adam
+  weight_decay: 0
+
+seed: 42
+save_every:
+
+augment:
+  shift_same: false
+  remix:
+    proba: 1
+    group_size: 4
+  scale:
+    proba: 1
+    min: 0.25
+    max: 1.25
+  flip: true
+
+misc:
+  num_workers: 10
+
+
+# Some or all of the work in this file may be restricted by the following copyright.
+# MIT License
+
+# Copyright (c) 2024 starrytong
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.

@@ -1,33 +1,31 @@
+import argparse
 import os
+import sys
+
 import torch
+from accelerate import Accelerator
 from torch.utils.data import DataLoader
-from .wav import get_wav_datasets
+
+from .log import logger
 from .SCNet import SCNet
 from .solver import Solver
-import argparse
-import yaml
-import sys
-from ml_collections import ConfigDict
-from accelerate import Accelerator
-from .log import logger
+from .wav import get_wav_datasets
+from hhSCNet import load_config_from_yaml
 
 accelerator = Accelerator()
 
 def get_model(config):
-
     model = SCNet(**config.model)
     total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
     logger.info(f"Total number of parameters: {total_params}")
     return model
 
-
-def get_solver(args):
-    with open(args.config_path, 'r') as file:
-          config = ConfigDict(yaml.load(file, Loader=yaml.FullLoader))
-
+def get_solver(argsNamespace: argparse.Namespace):
+    config = load_config_from_yaml(argsNamespace.config_path)
+    
     torch.manual_seed(config.seed)
     model = get_model(config)
-  
+
     # torch also initialize cuda seed if available
     if torch.cuda.is_available():
         model.cuda()
@@ -60,28 +58,26 @@ def get_solver(args):
     loaders = {"train": train_loader, "valid": valid_loader}
 
     model, optimizer = accelerator.prepare(model, optimizer)
-    
-    return Solver(loaders, model, optimizer, config, args)
+
+    return Solver(loaders, model, optimizer, config, argsNamespace)
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--save_path", type=str, default='./result/', help="path to config file")
     parser.add_argument("--config_path", type=str, default='./conf/config.yaml', help="path to save checkpoint")
-    args = parser.parse_args()
+    argsNamespace = parser.parse_args()
 
-    if not os.path.exists(args.save_path):
-        os.makedirs(args.save_path)
+    if not os.path.exists(argsNamespace.save_path):
+        os.makedirs(argsNamespace.save_path)
 
-    if not os.path.isfile(args.config_path):
-        print(f"Error: config file {args.config_path} does not exist.")
+    if not os.path.isfile(argsNamespace.config_path):
+        print(f"Error: config file {argsNamespace.config_path} does not exist.")
         sys.exit(1)
-        
-    solver = get_solver(args)
+
+    solver = get_solver(argsNamespace)
     accelerator.wait_for_everyone()
     solver.train()
-
-
 
 if __name__ == "__main__":
     main()
@@ -108,5 +104,4 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-"""
+SOFTWARE."""

@@ -6,11 +6,8 @@ import soundfile as sf
 from .SCNet import SCNet
 from .utils import load_model, convert_audio
 from .apply import apply_model
-from ml_collections import ConfigDict
 import argparse
-import yaml
-
-
+from hhSCNet import load_config_from_yaml
 
 class Seperator:
     def __init__(self, model, checkpoint_path):
@@ -120,8 +117,7 @@ def parse_args():
 
 if __name__ == "__main__":
     args = parse_args()
-    with open(args.config_path, 'r') as file:
-          config = ConfigDict(yaml.load(file, Loader=yaml.FullLoader))
+    config = load_config_from_yaml(args.config_path)
 
     if not os.path.exists(args.output_dir):
         os.mkdir(args.output_dir)
@@ -153,5 +149,4 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-"""
+SOFTWARE."""

@@ -1,0 +1,1 @@
+from .purgatory import load_config_from_yaml
