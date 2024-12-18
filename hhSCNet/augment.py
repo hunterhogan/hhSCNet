@@ -25,7 +25,6 @@ class Shift(nn.Module):
                 wav = wav.gather(3, indexes + offsets)
         return wav
 
-
 class FlipChannels(nn.Module):
     """
     Flip left-right channels.
@@ -39,7 +38,6 @@ class FlipChannels(nn.Module):
             wav = th.cat([wav.gather(2, left), wav.gather(2, right)], dim=2)
         return wav
 
-
 class FlipSign(nn.Module):
     """
     Random sign flip.
@@ -50,7 +48,6 @@ class FlipSign(nn.Module):
             signs = th.randint(2, (batch, sources, 1, 1), device=wav.device, dtype=th.float32)
             wav = wav * (2 * signs - 1)
         return wav
-
 
 class Remix(nn.Module):
     """
@@ -84,7 +81,6 @@ class Remix(nn.Module):
             wav = wav.gather(1, permutations.expand(-1, -1, -1, channels, time))
             wav = wav.view(batch, streams, channels, time)
         return wav
-
 
 class Scale(nn.Module):
     def __init__(self, proba=1., min=0.25, max=1.25):

@@ -10,7 +10,6 @@ def spec_rmse_loss(estimate, sources, stft_config):
     spec_estimate = torch.stft(spec_estimate, **stft_config, return_complex=True)
     spec_sources = torch.stft(spec_sources, **stft_config, return_complex=True)
 
-
     spec_estimate = torch.view_as_real(spec_estimate)
     spec_sources = torch.view_as_real(spec_sources)
 

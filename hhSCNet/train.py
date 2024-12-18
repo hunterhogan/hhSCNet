@@ -61,7 +61,6 @@ def get_solver(argsNamespace: argparse.Namespace):
 
     return Solver(loaders, model, optimizer, config, argsNamespace)
 
-
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--save_path", type=str, default='./result/', help="path to config file")

@@ -2,7 +2,6 @@ from contextlib import contextmanager
 import torch
 from .utils import swap_state
 
-
 class ModelEMA:
     """
     Perform EMA on a model. You can switch to the EMA weights temporarily

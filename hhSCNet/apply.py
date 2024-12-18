@@ -10,8 +10,6 @@ from accelerate import Accelerator
 
 accelerator = Accelerator()
 
-
-
 class TensorChunk:
     def __init__(self, tensor, offset=0, length=None):
         total_length = tensor.shape[-1]

@@ -10,7 +10,6 @@ class Swish(nn.Module):
     def forward(self, x):
         return x * x.sigmoid()
 
-
 class ConvolutionModule(nn.Module):
     """
     Convolution Module in SD block.
@@ -47,7 +46,6 @@ class ConvolutionModule(nn.Module):
             x = x + layer(x)
         return x
 
-
 class FusionLayer(nn.Module):
     """
     A FusionLayer within the decoder.
@@ -70,7 +68,6 @@ class FusionLayer(nn.Module):
         x = self.conv(x)
         x = F.glu(x, dim=1)
         return x
-
 
 class SDlayer(nn.Module):
     """
@@ -132,7 +129,6 @@ class SDlayer(nn.Module):
 
         return outputs, original_lengths
 
-
 class SUlayer(nn.Module):
     """
     Implements a Sparse Up-sample Layer in decoder.
@@ -177,7 +173,6 @@ class SUlayer(nn.Module):
  
         return x
 
-
 class SDblock(nn.Module):
     """
     Implements a simplified Sparse Down-sample block in encoder.
@@ -219,7 +214,6 @@ class SDblock(nn.Module):
         output = self.globalconv(full_band)
 
         return output, skip, lengths, original_lengths 
-
 
 class SCNet(nn.Module):
     """
