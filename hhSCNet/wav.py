@@ -4,7 +4,7 @@ import math
 import json
 import os
 from pathlib import Path
-import tqdm
+from tqdm.auto import tqdm
 
 import julius
 import torch as th
@@ -80,7 +80,7 @@ def build_metadata(path, sources, normalize=True, ext=EXT):
             name = str(root.relative_to(path))
             pendings.append((name, pool.submit(_track_metadata, root, sources, normalize, ext)))
             # meta[name] = _track_metadata(root, sources, normalize, ext)
-        for name, pending in tqdm.tqdm(pendings, ncols=120):
+        for name, pending in tqdm(pendings, ncols=120):
             meta[name] = pending.result()
     return meta
 
@@ -175,10 +175,10 @@ def get_wav_datasets(args):
         metadata_file.parent.mkdir(exist_ok=True, parents=True)
         train = build_metadata(train_path, args.sources)
         valid = build_metadata(valid_path, args.sources)
-        json.dump([train, valid], open(metadata_file, "w"))
+        metadata_file.write_text(json.dumps([train, valid]))
     accelerator.wait_for_everyone()
 
-    train, valid = json.load(open(metadata_file))
+    train, valid = json.loads(metadata_file.read_text())
     kw_cv = {}
 
     train_set = Wavset(train_path, train, args.sources,

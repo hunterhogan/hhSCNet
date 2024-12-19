@@ -1,4 +1,6 @@
+import atexit
 import logging
+
 from accelerate import Accelerator
 
 accelerator = Accelerator()
@@ -6,22 +8,38 @@ accelerator = Accelerator()
 class MainProcessFilter(logging.Filter):
     def filter(self, record):
         return accelerator.is_main_process
-        
-log_file = 'training.log'
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.StreamHandler(),
-        logging.FileHandler(log_file) 
-    ]
-)
-logger = logging.getLogger(__name__)
-logger.addFilter(MainProcessFilter())
 
-torch_logger = logging.getLogger('torch')
-torch_logger.setLevel(logging.WARNING)
-torch_logger.addFilter(MainProcessFilter())
+def setup_logging():
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.INFO)
+    
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+    logger.addHandler(console_handler)
+    
+    file_handler = logging.FileHandler('training.log')
+    file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+    logger.addHandler(file_handler)
+    
+    main_process_filter = MainProcessFilter()
+    console_handler.addFilter(main_process_filter)
+    file_handler.addFilter(main_process_filter)
+    
+    torch_logger = logging.getLogger('torch')
+    torch_logger.setLevel(logging.WARNING)
+    torch_logger.addFilter(main_process_filter)
+    
+    # Register cleanup
+    def cleanup():
+        for handler in logger.handlers[:]:
+            handler.close()
+            logger.removeHandler(handler)
+    
+    atexit.register(cleanup)
+    
+    return logger
+
+logger = setup_logging()
 
 # Some or all of the work in this file may be restricted by the following copyright.
 """

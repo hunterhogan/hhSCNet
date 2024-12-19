@@ -1,12 +1,12 @@
-from concurrent.futures import ThreadPoolExecutor
 import random
+from concurrent.futures import ThreadPoolExecutor
 
-import torch as th
-from torch.nn import functional as F
-import tqdm
-
-from .utils import center_trim, DummyPoolExecutor
+import torch
+from tqdm.auto import tqdm
 from accelerate import Accelerator
+from torch.nn import functional as F
+
+from .utils import DummyPoolExecutor, center_trim
 
 accelerator = Accelerator()
 
@@ -55,7 +55,7 @@ def tensor_chunk(tensor_or_chunk):
     if isinstance(tensor_or_chunk, TensorChunk):
         return tensor_or_chunk
     else:
-        assert isinstance(tensor_or_chunk, th.Tensor)
+        assert isinstance(tensor_or_chunk, torch.Tensor)
         return TensorChunk(tensor_or_chunk)
 
 
@@ -101,14 +101,14 @@ def apply_model(model, mix, shifts=1, split=True, segment=20, samplerate=44100,
     batch, channels, length = mix.shape
     if split:
         kwargs['split'] = False
-        out = th.zeros(batch, len(model.sources), channels, length, device=mix.device)
-        sum_weight = th.zeros(length, device=mix.device)
+        out = torch.zeros(batch, len(model.sources), channels, length, device=mix.device)
+        sum_weight = torch.zeros(length, device=mix.device)
         segment = int(samplerate * segment)
         stride = int((1 - overlap) * segment)
         offsets = range(0, length, stride)
         scale = stride / samplerate
-        weight = th.cat([th.arange(1, segment // 2 + 1, device=device),
-                         th.arange(segment - segment // 2, 0, -1, device=device)])              
+        weight = torch.cat([torch.arange(1, segment // 2 + 1, device=device),
+                         torch.arange(segment - segment // 2, 0, -1, device=device)])              
         assert len(weight) == segment
         # If the overlap < 50%, this will translate to linear transition when
         # transition_power is 1.
@@ -120,7 +120,7 @@ def apply_model(model, mix, shifts=1, split=True, segment=20, samplerate=44100,
             futures.append((future, offset))
             offset += segment
         if progress:
-            futures = tqdm.tqdm(futures, unit_scale=scale, ncols=120, unit='seconds')
+            futures = tqdm(futures, unit_scale=scale, ncols=120, unit='seconds')
         for future, offset in futures:
             chunk_out = future.result()
             chunk_length = chunk_out.shape[-1]
@@ -134,7 +134,9 @@ def apply_model(model, mix, shifts=1, split=True, segment=20, samplerate=44100,
         max_shift = int(0.5 * samplerate)
         mix = tensor_chunk(mix)
         padded_mix = mix.padded(length + 2 * max_shift)
-        out = 0
+
+        out = torch.tensor(0)
+
         for _ in range(shifts):
             offset = random.randint(0, max_shift)
             shifted = TensorChunk(padded_mix, offset, length + max_shift - offset)
@@ -145,7 +147,7 @@ def apply_model(model, mix, shifts=1, split=True, segment=20, samplerate=44100,
     else:
         mix = tensor_chunk(mix)
         padded_mix = mix.padded(length).to(device)
-        with th.no_grad():
+        with torch.no_grad():
             out = model(padded_mix)
         return center_trim(out, length)
 

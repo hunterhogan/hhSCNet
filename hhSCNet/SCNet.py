@@ -1,10 +1,12 @@
+import math
+from collections import deque
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from collections import deque
+
 from .separation import SeparationNet
-import typing as tp
-import math
+
 
 class Swish(nn.Module):
     def forward(self, x):

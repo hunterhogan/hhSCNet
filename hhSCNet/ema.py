@@ -1,6 +1,9 @@
 from contextlib import contextmanager
+
 import torch
+
 from .utils import swap_state
+
 
 class ModelEMA:
     """

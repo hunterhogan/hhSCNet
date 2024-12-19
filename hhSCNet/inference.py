@@ -1,13 +1,16 @@
 import os
 import time
+
 import numpy as np
-import torch
 import soundfile as sf
-from .SCNet import SCNet
-from .utils import load_model, convert_audio
+import torch
+
+from hhSCNet import loadModelConfigurationYaml
+
 from .apply import apply_model
-import argparse
-from hhSCNet import load_config_from_yaml
+from .SCNet import SCNet
+from .utils import convert_audio, load_model
+
 
 class Separator:
     def __init__(self, model, checkpoint_path):
@@ -107,25 +110,26 @@ class Separator:
             save_dir = os.path.join(output_dir, entry_name)
             self.save_sources(separated_music_arrays, output_sample_rates, save_dir)
 
-def parse_args():
-    parser = argparse.ArgumentParser(description="Music Source Separation using SCNet")
-    parser.add_argument('--input_dir', type=str, help='Input directory containing audio files')
-    parser.add_argument('--output_dir', type=str, help='Output directory to save separated sources')
-    parser.add_argument('--config_path', type=str, default='./conf/config.yaml', help='Path to configuration file')
-    parser.add_argument('--checkpoint_path', type=str, default='./result/checkpoint.th', help='Path to model checkpoint file')
-    return parser.parse_args()
+def runInference(pathInput: str, pathOutput: str, 
+                modelConfiguration: str = "./conf/config.yaml",
+                checkpoint: str = "./result/checkpoint.th") -> None:
+    """Run inference on audio files.
+    
+    Parameters
+        pathInput: Input directory containing audio files to separate
+        pathOutput: Output directory to save separated sources
+        modelConfiguration: Path to model configuration YAML file
+        checkpoint: Path to model checkpoint file
+    """
+    config = loadModelConfigurationYaml(modelConfiguration)
 
-if __name__ == "__main__":
-    args = parse_args()
-    config = load_config_from_yaml(args.config_path)
-
-    if not os.path.exists(args.output_dir):
-        os.mkdir(args.output_dir)
+    if not os.path.exists(pathOutput):
+        os.mkdir(pathOutput)
 
     model = SCNet(**config.model)
     model.eval()
-    separator = Separator(model, args.checkpoint_path)
-    separator.process_directory(args.input_dir, args.output_dir)
+    separator = Separator(model, checkpoint)
+    separator.process_directory(pathInput, pathOutput)
 
 # Some or all of the work in this file may be restricted by the following copyright.
 """

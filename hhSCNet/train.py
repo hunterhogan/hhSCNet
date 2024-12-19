@@ -1,16 +1,13 @@
-import argparse
-import os
-import sys
-
 import torch
 from accelerate import Accelerator
 from torch.utils.data import DataLoader
+
+from hhSCNet import loadModelConfigurationYaml
 
 from .log import logger
 from .SCNet import SCNet
 from .solver import Solver
 from .wav import get_wav_datasets
-from hhSCNet import load_config_from_yaml
 
 accelerator = Accelerator()
 
@@ -20,8 +17,8 @@ def get_model(config):
     logger.info(f"Total number of parameters: {total_params}")
     return model
 
-def get_solver(argsNamespace: argparse.Namespace):
-    config = load_config_from_yaml(argsNamespace.config_path)
+def get_solver(modelConfiguration, pathSave):
+    config = loadModelConfigurationYaml(modelConfiguration)
     
     torch.manual_seed(config.seed)
     model = get_model(config)
@@ -59,27 +56,27 @@ def get_solver(argsNamespace: argparse.Namespace):
 
     model, optimizer = accelerator.prepare(model, optimizer)
 
-    return Solver(loaders, model, optimizer, config, argsNamespace)
+    return Solver(loaders, model, optimizer, config, pathSave)
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--save_path", type=str, default='./result/', help="path to config file")
-    parser.add_argument("--config_path", type=str, default='./conf/config.yaml', help="path to save checkpoint")
-    argsNamespace = parser.parse_args()
+def trainModel(modelConfiguration: str = "./conf/config.yaml", pathSave: str = "./result/") -> None:
+    """Train the music source separation model.
+    
+    Parameters
+        modelConfiguration: Path to the YAML configuration file
+        pathSave: Directory path where checkpoints will be saved
+    """
+    import os
+    import sys
+    if not os.path.exists(pathSave):
+        os.makedirs(pathSave)
 
-    if not os.path.exists(argsNamespace.save_path):
-        os.makedirs(argsNamespace.save_path)
-
-    if not os.path.isfile(argsNamespace.config_path):
-        print(f"Error: config file {argsNamespace.config_path} does not exist.")
+    if not os.path.isfile(modelConfiguration):
+        print(f"Error: config file {modelConfiguration} does not exist.")
         sys.exit(1)
 
-    solver = get_solver(argsNamespace)
+    solver = get_solver(modelConfiguration, pathSave)
     accelerator.wait_for_everyone()
     solver.train()
-
-if __name__ == "__main__":
-    main()
 
 # Some or all of the work in this file may be restricted by the following copyright.
 """

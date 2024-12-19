@@ -1,14 +1,17 @@
-import torch
 from pathlib import Path
-from .utils import copy_state, EMA, new_sdr
-from .apply import apply_model
-from .ema import ModelEMA
-from . import augment
-from .loss import spec_rmse_loss
-from tqdm import tqdm
-from .log import logger
+
+import torch
 from accelerate import Accelerator
 from torch.cuda.amp import GradScaler, autocast
+from tqdm.auto import tqdm
+
+from . import augment
+from .apply import apply_model
+from .ema import ModelEMA
+from .log import logger
+from .loss import spec_rmse_loss
+from .utils import EMA, copy_state, new_sdr
+
 
 def _summary(metrics):
     return " | ".join(f"{key.capitalize()}={val}" for key, val in metrics.items())

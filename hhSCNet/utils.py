@@ -1,12 +1,13 @@
-from collections import defaultdict
-from contextlib import contextmanager
 import os
 import tempfile
 import typing as tp
-import torch
-import julius
-from pathlib import Path
+from collections import defaultdict
 from contextlib import contextmanager
+from pathlib import Path
+
+import julius
+import torch
+
 
 # Audio
 def convert_audio_channels(wav, channels=2):
