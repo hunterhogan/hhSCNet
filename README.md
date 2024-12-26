@@ -1,5 +1,7 @@
 # hhSCNet
 
+SCNet in an easier-to-install package and with some small changes. The result should be easier to integrate into your Python package.
+
 See [SCNet: Sparse Compression Network for Music Source Separation](https://arxiv.org/abs/2401.13276)
 
 ## Usage

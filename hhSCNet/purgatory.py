@@ -1,4 +1,3 @@
-# Apply style guide
 from ml_collections import config_dict
 from ruamel.yaml import YAML
 from typing import Any
