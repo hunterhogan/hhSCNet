@@ -1,33 +1,51 @@
-[tool.poetry]
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
 name = "hhSCNet"
 version = "0.1.0"
 description = "SCNet music separation, but easier to install and integrate."
-authors = ["Hunter Hogan <HunterHogan@pm.me>"]
 readme = "README.md"
+requires-python = ">=3.10, <4.0"
+authors = [{ name = "Hunter Hogan", email = "HunterHogan@pm.me" }]
+dependencies = [
+    "accelerate",
+    "einops",
+    "julius",
+    "ml_collections>=0.1.1",
+    "numpy>=2.0.0",
+    "ruamel-yaml",
+    "soundfile",
+    "torch>=2.0.0",
+    "torchaudio>=2.0.0",
+    "tqdm"
+]
 
-[tool.poetry.dependencies]
-accelerate = "*"
-# accelerate = ">=0.32.1"
-einops = "*"
-# einops = ">=0.6.1"
-julius = "*"
-# julius = ">=0.2.7"
-ml_collections = ">=0.1.1"
-numpy = ">=2.0.0"
-python = ">=3.10"
-ruamel-yaml = "*"
-soundfile = "*"
-# soundfile = ">=0.12.1"
-torch = ">=2.0.0"
-torchaudio = ">=2.0.0"
-tqdm = "*"
-
-[tool.poetry.scripts]
+[project.scripts]
 hhSCNet = "hhSCNet:main"
 
-[tool.poetry.group.test.dependencies]
-pytest = "*"
+[project.optional-dependencies]
+testing = ["pytest", "pytest-cov", "pytest-mock"]
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[project.urls]
+homepage = "https://github.com/hunterhogan/hhSCNet"
+repository = "https://github.com/hunterhogan/hhSCNet.git"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["--color=yes"]
+
+[tool.coverage.run]
+data_file = "tests/coverage/.coverage"
+omit = ["hhSCNet/__init__.py", "tests/*"]
+
+[tool.coverage.paths]
+source = ["hhSCNet"]
