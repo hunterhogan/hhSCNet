@@ -6,38 +6,38 @@ from accelerate import Accelerator
 accelerator = Accelerator()
 
 class MainProcessFilter(logging.Filter):
-    def filter(self, record):
-        return accelerator.is_main_process
+	def filter(self, record):
+		return accelerator.is_main_process
 
 def setup_logging():
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.INFO)
-    
-    console_handler = logging.StreamHandler()
-    console_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
-    logger.addHandler(console_handler)
-    
-    file_handler = logging.FileHandler('training.log')
-    file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
-    logger.addHandler(file_handler)
-    
-    main_process_filter = MainProcessFilter()
-    console_handler.addFilter(main_process_filter)
-    file_handler.addFilter(main_process_filter)
-    
-    torch_logger = logging.getLogger('torch')
-    torch_logger.setLevel(logging.WARNING)
-    torch_logger.addFilter(main_process_filter)
-    
-    # Register cleanup
-    def cleanup():
-        for handler in logger.handlers[:]:
-            handler.close()
-            logger.removeHandler(handler)
-    
-    atexit.register(cleanup)
-    
-    return logger
+	logger = logging.getLogger(__name__)
+	logger.setLevel(logging.INFO)
+	
+	console_handler = logging.StreamHandler()
+	console_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+	logger.addHandler(console_handler)
+	
+	file_handler = logging.FileHandler('training.log')
+	file_handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+	logger.addHandler(file_handler)
+	
+	main_process_filter = MainProcessFilter()
+	console_handler.addFilter(main_process_filter)
+	file_handler.addFilter(main_process_filter)
+	
+	torch_logger = logging.getLogger('torch')
+	torch_logger.setLevel(logging.WARNING)
+	torch_logger.addFilter(main_process_filter)
+	
+	# Register cleanup
+	def cleanup():
+		for handler in logger.handlers[:]:
+			handler.close()
+			logger.removeHandler(handler)
+	
+	atexit.register(cleanup)
+	
+	return logger
 
 logger = setup_logging()
 

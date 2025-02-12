@@ -7,10 +7,10 @@ from hhSCNet.train import trainModel
 from hhSCNet.commandLine import processCommandLine
 
 def main() -> int:
-    """Entry point for the command line interface."""
-    import sys
-    return processCommandLine()
+	"""Entry point for the command line interface."""
+	import sys
+	return processCommandLine()
 
 if __name__ == "__main__":
-    import sys
-    sys.exit(main())
+	import sys
+	sys.exit(main())
