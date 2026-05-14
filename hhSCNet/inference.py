@@ -40,11 +40,20 @@ class Separator:
 			separated_music_arrays: Dictionary numpy array of each separated instrument
 			output_sample_rates: Dictionary of sample rates separated sequence
 		"""
+		# Convert audio to tensor and handle shape properly
 		mix = torch.from_numpy(np.asarray(mixed_sound_array.T, np.float32))
 
-		# convert audio to GPU
+		# Check shape and dimensions
+		print(f"Input audio shape before processing: {mix.shape}")
+
+		# Store original number of channels for output conversion
+		original_channels = 1 if mix.ndim == 1 else mix.shape[0]
+		print(f"Original audio has {original_channels} channel(s)")
+
+		# Move to GPU
 		mix = mix.to(self.device)
-		mix_channels = mix.shape[0]
+
+		# Convert to model's expected format
 		mix = convert_audio(mix, sample_rate, 44100, self.separator.audio_channels)
 
 		b = time.time()
@@ -61,7 +70,9 @@ class Separator:
 
 		estimates = estimates * std + mean
 
-		estimates = convert_audio(estimates, 44100, sample_rate, mix_channels)
+		print(f"Model output shape before conversion: {estimates.shape}")
+		# Convert back to original sample rate and channel count
+		estimates = convert_audio(estimates, 44100, sample_rate, original_channels)
 
 		separated_music_arrays = {}
 		output_sample_rates = {}
@@ -71,7 +82,6 @@ class Separator:
 			output_sample_rates[instrument] = sample_rate
 
 		return separated_music_arrays, output_sample_rates
-
 
 	def load_audio(self, file_path):
 		try:
@@ -110,11 +120,11 @@ class Separator:
 			save_dir = os.path.join(output_dir, entry_name)
 			self.save_sources(separated_music_arrays, output_sample_rates, save_dir)
 
-def runInference(pathInput: str, pathOutput: str, 
+def runInference(pathInput: str, pathOutput: str,
 				modelConfiguration: str = "./conf/config.yaml",
 				checkpoint: str = "./result/checkpoint.th") -> None:
 	"""Run inference on audio files.
-	
+
 	Parameters
 		pathInput: Input directory containing audio files to separate
 		pathOutput: Output directory to save separated sources
