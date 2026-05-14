@@ -1,19 +1,19 @@
-import pathlib
-import pytest
-from ml_collections import config_dict
-from typing import List
-from ruamel.yaml import YAML
-from types import SimpleNamespace
+from __future__ import annotations
 
 from hhSCNet import loadModelConfigurationYaml
-from hhSCNet.commandLine import createParserWithCommands, processCommandLine, registryCommands, extractFunctionMetadata
+from hhSCNet.commandLine import createParserWithCommands, registryCommands
+from ml_collections import config_dict
+from ruamel.yaml import YAML
+from types import SimpleNamespace
+import pathlib
+import pytest
 
 # Constants for test data paths
 pathDirectoryTests = pathlib.Path(__file__).parent
 pathDirectorySamples = pathDirectoryTests / "dataSamples"
 pathConfigSample = pathDirectorySamples / "configSample.yaml"
 
-def build_command_args(command: str, **kwargs: str) -> List[str]:
+def build_command_args(command: str, **kwargs: str) -> list[str]:
 	"""Build command line arguments list from command and parameters."""
 	result = [command]
 	for key, value in kwargs.items():
@@ -64,9 +64,9 @@ def test_load_config_yaml_errors(invalidConfig):
 def test_yaml_loading():
 	"""Test direct YAML loading functionality."""
 	args = SimpleNamespace(config_path=str(pathConfigSample))
-	rYaml = YAML(typ='safe')	
+	rYaml = YAML(typ='safe')
 	dataYaml = rYaml.load(pathlib.Path(args.config_path).read_text())
-	
+
 	assert isinstance(dataYaml, dict)
 	assert all(key in dataYaml for key in ['data', 'model'])
 	assert dataYaml['data']['samplerate'] == 44100

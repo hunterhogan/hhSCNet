@@ -1,6 +1,3 @@
 __pycache__/
 *.egg-info/
-/Lib/site-packages/
-/Scripts/
-/share/man/man1/
-pyvenv.cfg
+/build/

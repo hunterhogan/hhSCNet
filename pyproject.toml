@@ -1,26 +1,26 @@
-[build-system]
-requires = ["setuptools>=61.0", "wheel"]
-build-backend = "setuptools.build_meta"
-
 [project]
 name = "hhSCNet"
-version = "0.1.0"
+version = "0.1.1"
 description = "SCNet music separation, but easier to install and integrate."
 readme = "README.md"
-requires-python = ">=3.10, <4.0"
+requires-python = ">=3.10"
 authors = [{ name = "Hunter Hogan", email = "HunterHogan@pm.me" }]
 dependencies = [
-    "accelerate",
-    "einops",
-    "julius",
-    "ml_collections>=0.1.1",
-    "numpy>=2.0.0",
-    "ruamel-yaml",
-    "soundfile",
-    "torch>=2.0.0",
-    "torchaudio>=2.0.0",
-    "tqdm"
+  "accelerate",
+  "einops",
+  "julius",
+  "ml_collections>=0.1.1",
+  "numpy>=2.0.0",
+  "ruamel-yaml",
+  "soundfile",
+  "torch>=2.0.0, <3.0.0",
+  "torchaudio>=2.0.0, <3.0.0",
+  "tqdm"
 ]
+
+[project.urls]
+homepage = "https://github.com/hunterhogan/hhSCNet"
+repository = "https://github.com/hunterhogan/hhSCNet.git"
 
 [project.scripts]
 hhSCNet = "hhSCNet:main"
@@ -28,20 +28,9 @@ hhSCNet = "hhSCNet:main"
 [project.optional-dependencies]
 testing = ["pytest", "pytest-cov", "pytest-mock"]
 
-[project.urls]
-homepage = "https://github.com/hunterhogan/hhSCNet"
-repository = "https://github.com/hunterhogan/hhSCNet.git"
-
-[tool.setuptools]
-include-package-data = true
-
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["*"]
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-addopts = ["--color=yes"]
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
 
 [tool.coverage.run]
 data_file = "tests/coverage/.coverage"
@@ -49,3 +38,14 @@ omit = ["hhSCNet/__init__.py", "tests/*"]
 
 [tool.coverage.paths]
 source = ["hhSCNet"]
+
+[tool.pytest]
+addopts = ["--color=yes"]
+testpaths = ["tests"]
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["*"]
